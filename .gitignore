@@ -1,3 +1,4 @@
 /pybo_env/Lib
 /myproject/__pycache__/*
 /myproject/pybo/__pycache__/*
+/myproject/pybo/views/__pycache__/*
