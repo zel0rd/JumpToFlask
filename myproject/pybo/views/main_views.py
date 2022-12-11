@@ -6,6 +6,6 @@ bp = Blueprint('main', __name__, url_prefix='/')
 def hello_pybo():
   return 'Hello, Pybo!'
 
-@bp.route('/')
+@bp.route('/2')
 def index():
   return 'Pybo index'
