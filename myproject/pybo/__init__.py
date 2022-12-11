@@ -1,9 +1,12 @@
+import config
+from .db import db
 from flask import Flask
 from pymysql import cursors, connect
-from .db import db
+
 
 def create_app():
     app = Flask(__name__)
+    app.config.from_object(config)
 
     # 블루프린트
     from .views import main_views, question_views, answer_views
