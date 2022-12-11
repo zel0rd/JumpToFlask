@@ -1,27 +1,13 @@
 from flask import Flask
 from pymysql import cursors, connect
-
-db = connect(host='localhost',
-            user='root',
-            password='qhdkscjfwj0!',
-            database='pybo')
+from .db import db
 
 def create_app():
     app = Flask(__name__)
 
     # 블루프린트
-    from .views import main_views
+    from .views import main_views, question_views
     app.register_blueprint(main_views.bp)
-    
-    @app.route('/')
-    def hello():
-        cursor = db.cursor()
-        sql = "SELECT * FROM `answer`"
-        
-        cursor.execute(sql)
-        result = cursor.fetchone()
-        
-        print(result)
-        return str(result)
+    app.register_blueprint(question_views.bp)
     
     return app
