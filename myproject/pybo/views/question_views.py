@@ -22,5 +22,9 @@ def detail(question_id):
   sql = "SELECT * FROM `question` WHERE id = {}".format(question_id)
   cursor.execute(sql)
   question = cursor.fetchone()
-
-  return render_template('question/question_detail.html', question=question)
+  
+  sql = "SELECT * FROM `answer` WHERE question_id = {}".format(question_id)
+  cursor.execute(sql)
+  answer_set = cursor.fetchall()
+  
+  return render_template('question/question_detail.html', question=question, answer_set=answer_set)
