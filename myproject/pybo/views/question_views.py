@@ -30,14 +30,11 @@ def detail(question_id):
 
 @bp.route('/create/', methods=('GET', 'POST'))
 def create():
-  form = AnswerForm()
+  form = QuestionForm()
   if request.method == "POST" and form.validate_on_submit():
     cursor = db.cursor()
-    content = request.form['content']
-    sql = "insert into question (content, create_date) values ('{}','{}','{}')".format(content, datetime.now())
+    sql = "insert into question (subject, content, create_date) values ('{}','{}','{}')".format(form.subject.data, form.content.data, datetime.now())
     cursor.execute(sql)
     db.commit()
-    
-    return redirect(url_for('question.detail', question_id=question_id))
-  
+    return redirect(url_for('main.index'))
   return render_template('question/question_form.html', form=form)
