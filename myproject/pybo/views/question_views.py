@@ -23,6 +23,14 @@ def _list():
   cursor.execute(sql)
   get_length = cursor.fetchone()
   
+  sql = "select question_id as id, count(question_id) as count from answer group by question_id;"
+  cursor.execute(sql)
+  answer_count = cursor.fetchall()
+  
+  answer_set = {}
+  for data in answer_count:
+    answer_set[data['id']] = data['count']
+
   next_num = page + 1
   prev_num = page - 1
   has_next = bool(next_count['count'] > 0)
@@ -37,6 +45,7 @@ def _list():
   question_list['prev_num'] = prev_num
   question_list['number'] = number
   question_list['max_page'] = list(range(1,max_page+1))
+  question_list['answer_set'] = answer_set
   
   return render_template('question/question_list.html', question_list=question_list)
 

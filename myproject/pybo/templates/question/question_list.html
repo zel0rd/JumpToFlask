@@ -7,6 +7,7 @@
                 <th>번호</th>
                 <th>제목</th>
                 <th>작성일시</th>
+                <th>답변수</th>
             </tr>
         </thead>
         <tbody>
@@ -16,6 +17,13 @@
                 <td>{{ loop.index + question_list.number * (question_list.page - 1) }}</td>
                 <td><a href="{{ url_for('question.detail', question_id=question.id) }}">{{ question.subject }}</a></td>
                 <td>{{ question.create_date|datetime }}</td>
+                <td>
+                    {% if question_list.answer_set[question.id] %}
+                        {{ question_list.answer_set[question.id] }}
+                    {% else %}
+                        {{ 0 }}
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
             {% else %}
