@@ -7,11 +7,36 @@ bp = Blueprint('question', __name__, url_prefix='/question')
 
 @bp.route('/list')
 def _list():
+  question_list = {}
   cursor = db.cursor()
-  sql = "SELECT * FROM `question`"
+  number = 5;
+  page = request.args.get('page', type=int, default=1)
+  sql = "select * from question order by id ASC LIMIT {} OFFSET {};".format(number, number * (page-1))
   cursor.execute(sql)
-  question_list = cursor.fetchall()
-
+  items = cursor.fetchall()
+  
+  sql =  "select count(*) as count from (select * from question order by id ASC LIMIT {} OFFSET {}) as R2;".format(number, number * page)
+  cursor.execute(sql)
+  next_count = cursor.fetchone()
+  
+  sql = "select count(*) as count from question;"
+  cursor.execute(sql)
+  get_length = cursor.fetchone()
+  
+  next_num = page + 1
+  prev_num = page - 1
+  has_next = bool(next_count['count'] > 0)
+  has_prev = bool(page > 1)
+  max_page = (get_length['count'] - 1) // number + 1
+  
+  question_list['item'] = items
+  question_list['page'] = page
+  question_list['has_next'] = has_next
+  question_list['has_prev'] = has_prev
+  question_list['next_num'] = next_num
+  question_list['prev_num'] = prev_num
+  question_list['max_page'] = list(range(1,max_page+1))
+  
   return render_template('question/question_list.html', question_list=question_list)
 
 @bp.route('/detail/<int:question_id>/')
