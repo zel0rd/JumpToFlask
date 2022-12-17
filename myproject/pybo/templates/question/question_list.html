@@ -13,7 +13,7 @@
             {% if question_list %}
             {% for question in question_list.item %}
             <tr>
-                <td>{{ loop.index }}</td>
+                <td>{{ loop.index + question_list.number * (question_list.page - 1) }}</td>
                 <td><a href="{{ url_for('question.detail', question_id=question.id) }}">{{ question.subject }}</a></td>
                 <td>{{ question.create_date|datetime }}</td>
             </tr>

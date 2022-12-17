@@ -35,6 +35,7 @@ def _list():
   question_list['has_prev'] = has_prev
   question_list['next_num'] = next_num
   question_list['prev_num'] = prev_num
+  question_list['number'] = number
   question_list['max_page'] = list(range(1,max_page+1))
   
   return render_template('question/question_list.html', question_list=question_list)
