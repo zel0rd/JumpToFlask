@@ -3,9 +3,10 @@
 <div class="container my-3">
     <table class="table">
         <thead>
-            <tr class="thead-dark">
+            <tr class="text-center thead-dark">
                 <th>번호</th>
-                <th>제목</th>
+                <th style="width:50%">제목</th>
+                <th>글쓴이</th>
                 <th>작성일시</th>
                 <th>답변수</th>
             </tr>
@@ -13,9 +14,10 @@
         <tbody>
             {% if question_list %}
             {% for question in question_list.item %}
-            <tr>
+            <tr class="text-center">
                 <td>{{ loop.index + question_list.number * (question_list.page - 1) }}</td>
-                <td><a href="{{ url_for('question.detail', question_id=question.id) }}">{{ question.subject }}</a></td>
+                <td class="text-center"><a href="{{ url_for('question.detail', question_id=question.id) }}">{{ question.subject }}</a></td>
+                <td>{{ question.username }}</td>
                 <td>{{ question.create_date|datetime }}</td>
                 <td>
                     {% if question_list.answer_set[question.id] %}

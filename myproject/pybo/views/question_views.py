@@ -13,7 +13,7 @@ def _list():
   cursor = db.cursor()
   number = 5;
   page = request.args.get('page', type=int, default=1)
-  sql = "select * from question order by id ASC LIMIT {} OFFSET {};".format(number, number * (page-1))
+  sql = "select q.id, q.subject, q.content, q.create_date, user.username from question as q left join user on q.user_id=user.id order by id ASC LIMIT {} OFFSET {};".format(number, number * (page-1))
   cursor.execute(sql)
   items = cursor.fetchall()
   
@@ -49,17 +49,18 @@ def _list():
   question_list['max_page'] = list(range(1,max_page+1))
   question_list['answer_set'] = answer_set
   
+  print(items)
   return render_template('question/question_list.html', question_list=question_list)
 
 @bp.route('/detail/<int:question_id>/')
 def detail(question_id):
   form = AnswerForm()
   cursor = db.cursor()
-  sql = "SELECT * FROM `question` WHERE id = {}".format(question_id)
+  sql = "select * from question left join user on question.user_id = user.id where question.id={}".format(question_id)
   cursor.execute(sql)
   question = cursor.fetchone()
   
-  sql = "SELECT * FROM `answer` WHERE question_id = {}".format(question_id)
+  sql = "select * from answer left join user on answer.user_id=user.id where answer.question_id={}".format(question_id)
   cursor.execute(sql)
   answer_set = cursor.fetchall()
   
