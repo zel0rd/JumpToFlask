@@ -49,7 +49,6 @@ def _list():
   question_list['max_page'] = list(range(1,max_page+1))
   question_list['answer_set'] = answer_set
   
-  print(items)
   return render_template('question/question_list.html', question_list=question_list)
 
 @bp.route('/detail/<int:question_id>/')
@@ -77,3 +76,44 @@ def create():
     db.commit()
     return redirect(url_for('main.index'))
   return render_template('question/question_form.html', form=form)
+
+
+@bp.route('/modify/<int:question_id>', methods=('GET', 'POST'))
+@login_required
+def modify(question_id):
+    cursor = db.cursor()
+    sql = "select * from question where id={}".format(question_id)
+    cursor.execute(sql)
+    question = cursor.fetchone()
+    print(question)
+    if g.user != question['user_id']:
+        flash('수정권한이 없습니다')
+        return redirect(url_for('question.detail', question_id=question_id))
+    if request.method == 'POST':  # POST 요청
+        form = QuestionForm()
+        if form.validate_on_submit():
+            cursor = db.cursor()
+            sql = "update question set subject='{}', content='{}', modify_date='{}' where id={};".format(form.subject.data, form.content.data, datetime.now(), question_id) 
+            cursor.execute(sql)
+            db.commit()
+            return redirect(url_for('question.detail', question_id=question_id))
+    else:  # GET 요청
+        form = QuestionForm(subject=question['subject'], content=question['content'])
+    return render_template('question/question_form.html', form=form)
+  
+@bp.route('/delete/<int:question_id>')
+@login_required
+def delete(question_id):
+    cursor = db.cursor()
+    sql = "select user.id as user_id from question left join user on question.user_id = user.id where question.id={}".format(question_id)
+    cursor.execute(sql)
+    question = cursor.fetchone()
+    
+    if g.user != question['user_id']:
+        flash('삭제권한이 없습니다')
+        return redirect(url_for('question.detail', question_id=question_id))
+    
+    sql = "delete from question where id={}".format(question_id)
+    cursor.execute(sql)
+    db.commit()
+    return redirect(url_for('question._list'))
