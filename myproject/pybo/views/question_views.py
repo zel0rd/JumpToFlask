@@ -1,7 +1,9 @@
 from ..db import db
 from ..forms import QuestionForm, AnswerForm
-from flask import Blueprint, render_template, request, url_for, redirect, flash
+from flask import Blueprint, render_template, request, url_for, redirect, flash, g
 from datetime import datetime
+
+from .auth_views import login_required
 
 bp = Blueprint('question', __name__, url_prefix='/question') 
 
@@ -64,11 +66,12 @@ def detail(question_id):
   return render_template('question/question_detail.html', question=question, answer_set=answer_set, form=form)
 
 @bp.route('/create/', methods=('GET', 'POST'))
+@login_required
 def create():
   form = QuestionForm()
   if request.method == "POST" and form.validate_on_submit():
     cursor = db.cursor()
-    sql = "insert into question (subject, content, create_date) values ('{}','{}','{}')".format(form.subject.data, form.content.data, datetime.now())
+    sql = "insert into question (subject, content, create_date, user_id) values ('{}','{}','{}',{})".format(form.subject.data, form.content.data, datetime.now(), g.user)
     cursor.execute(sql)
     db.commit()
     return redirect(url_for('main.index'))
